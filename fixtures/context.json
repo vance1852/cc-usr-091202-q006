@@ -1,0 +1,8 @@
+{
+  "domain": "出生登记材料预审",
+  "fieldDictionary": ["birth_certificate", "guardian_identity", "household_relation"],
+  "records": [
+    {"applicationId": "B-401", "registryZone": "Asia/Shanghai", "hospitalZone": "Asia/Urumqi", "birthTime": "2026-09-30T23:30:00+06:00"},
+    {"applicationId": "B-402", "registryZone": "Asia/Shanghai", "hospitalZone": "Asia/Shanghai", "birthTime": "2026-10-01T08:15:00+08:00"}
+  ]
+}
