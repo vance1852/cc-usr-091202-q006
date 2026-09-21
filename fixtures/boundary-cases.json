@@ -1,0 +1,187 @@
+{
+  "description": "预审边界案例（脱敏）。覆盖跨时区跨日归一、曾用名补正与佐证新版本、重复上传复用、撤回不倒退、超期/过期/关系存疑转人工/拒绝。",
+  "cases": [
+    {
+      "caseId": "cross-zone-former-name",
+      "note": "投诉原型：乌鲁木齐深夜出生（登记地已次日），父亲证件为现用名、户口簿为曾用名，首次补正，补充曾用名佐证新版本后通过",
+      "applicationId": "B-401",
+      "registryZone": "Asia/Shanghai",
+      "materials": [
+        {
+          "kind": "birth_certificate",
+          "materialId": "bc",
+          "payload": {
+            "certificateNo": "X20260930001",
+            "hospitalName": "乌鲁木齐市某妇幼保健院",
+            "hospitalZone": "Asia/Urumqi",
+            "birthTime": "2026-09-30T23:30:00+06:00",
+            "child": { "name": "张小娃", "sex": "M" }
+          }
+        },
+        {
+          "kind": "household_relation",
+          "materialId": "hh",
+          "payload": {
+            "bookNo": "H310101202609",
+            "registryZone": "Asia/Shanghai",
+            "child": { "name": "张小娃" },
+            "guardians": [{ "name": "张建国", "relation": "father" }]
+          }
+        },
+        {
+          "kind": "guardian_identity",
+          "materialId": "g1",
+          "payload": {
+            "name": "张晋",
+            "formerNames": ["张建国"],
+            "formerNameRegistered": false,
+            "idType": "resident_id",
+            "idNumber": "310101199001011234",
+            "idExpiryDate": "2030-01-01",
+            "relation": "father"
+          }
+        }
+      ],
+      "supplement": {
+        "materialId": "g1",
+        "kind": "guardian_identity",
+        "payload": {
+          "name": "张晋",
+          "formerNames": ["张建国"],
+          "formerNameRegistered": true,
+          "idType": "resident_id",
+          "idNumber": "310101199001011234",
+          "idExpiryDate": "2030-01-01",
+          "relation": "father"
+        }
+      },
+      "expect": ["CORRECTION", "APPROVED"]
+    },
+    {
+      "caseId": "all-pass-then-withdraw-after-registration",
+      "note": "材料齐备一次通过；登记完成后撤回材料不允许令登记倒退",
+      "applicationId": "B-402",
+      "registryZone": "Asia/Shanghai",
+      "materials": [
+        {
+          "kind": "birth_certificate",
+          "materialId": "bc",
+          "payload": {
+            "certificateNo": "X20261001002",
+            "hospitalName": "上海市某妇产科医院",
+            "hospitalZone": "Asia/Shanghai",
+            "birthTime": "2026-10-01T08:15:00+08:00",
+            "child": { "name": "李小丫", "sex": "F" }
+          }
+        },
+        {
+          "kind": "household_relation",
+          "materialId": "hh",
+          "payload": {
+            "bookNo": "H310101000001",
+            "registryZone": "Asia/Shanghai",
+            "child": { "name": "李小丫" },
+            "guardians": [{ "name": "李文斌", "relation": "father" }]
+          }
+        },
+        {
+          "kind": "guardian_identity",
+          "materialId": "g1",
+          "payload": {
+            "name": "李文斌",
+            "formerNames": [],
+            "idType": "resident_id",
+            "idNumber": "110101198805056789",
+            "idExpiryDate": "2032-05-05",
+            "relation": "father"
+          }
+        }
+      ],
+      "expect": ["APPROVED"]
+    },
+    {
+      "caseId": "overdue-and-expired",
+      "note": "出生超 30 日报送时限 -> 人工；监护人证件已过期 -> 失败补正（manual 优先，整体转人工）",
+      "applicationId": "B-410",
+      "registryZone": "Asia/Shanghai",
+      "materials": [
+        {
+          "kind": "birth_certificate",
+          "materialId": "bc",
+          "payload": {
+            "certificateNo": "X20260701010",
+            "hospitalName": "上海市某医院",
+            "hospitalZone": "Asia/Shanghai",
+            "birthTime": "2026-07-01T09:00:00+08:00",
+            "child": { "name": "王晚来", "sex": "M" }
+          }
+        },
+        {
+          "kind": "household_relation",
+          "materialId": "hh",
+          "payload": {
+            "bookNo": "H310101000010",
+            "registryZone": "Asia/Shanghai",
+            "child": { "name": "王晚来" },
+            "guardians": [{ "name": "王强", "relation": "father" }]
+          }
+        },
+        {
+          "kind": "guardian_identity",
+          "materialId": "g1",
+          "payload": {
+            "name": "王强",
+            "formerNames": [],
+            "idType": "resident_id",
+            "idNumber": "310101198503030011",
+            "idExpiryDate": "2026-01-01",
+            "relation": "father"
+          }
+        }
+      ],
+      "expect": ["MANUAL"]
+    },
+    {
+      "caseId": "unknown-guardian-relation",
+      "note": "监护人不在同户且姓名对不上 -> 关系与姓名链均失败，整体补正；其余规则通过",
+      "applicationId": "B-411",
+      "registryZone": "Asia/Shanghai",
+      "materials": [
+        {
+          "kind": "birth_certificate",
+          "materialId": "bc",
+          "payload": {
+            "certificateNo": "X20260915011",
+            "hospitalName": "上海市某医院",
+            "hospitalZone": "Asia/Shanghai",
+            "birthTime": "2026-09-15T08:00:00+08:00",
+            "child": { "name": "赵小童", "sex": "F" }
+          }
+        },
+        {
+          "kind": "household_relation",
+          "materialId": "hh",
+          "payload": {
+            "bookNo": "H110101000011",
+            "registryZone": "Asia/Shanghai",
+            "child": { "name": "赵小童" },
+            "guardians": [{ "name": "赵敏", "relation": "mother" }]
+          }
+        },
+        {
+          "kind": "guardian_identity",
+          "materialId": "g1",
+          "payload": {
+            "name": "钱芳",
+            "formerNames": [],
+            "idType": "resident_id",
+            "idNumber": "310101199202022222",
+            "idExpiryDate": "2031-02-02",
+            "relation": "mother"
+          }
+        }
+      ],
+      "expect": ["CORRECTION"]
+    }
+  ]
+}

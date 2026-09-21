@@ -1,0 +1,60 @@
+{
+  "domain": "出生登记材料预审",
+  "version": "2026-09-01",
+  "materials": {
+    "birth_certificate": {
+      "label": "出生医学证明（医院交换报文）",
+      "fields": {
+        "certificateNo": { "type": "string", "required": true, "note": "出生证明编号" },
+        "hospitalName": { "type": "string", "required": true },
+        "hospitalZone": { "type": "iana_tz", "required": true, "note": "医院所在地 IANA 时区，如 Asia/Urumqi" },
+        "birthTime": {
+          "type": "iso8601_offset",
+          "required": true,
+          "note": "医院当地出生绝对时刻，必须带 UTC 偏移；系统按登记地时区重新取日历日期"
+        },
+        "child": {
+          "type": "object",
+          "fields": {
+            "name": { "type": "string", "required": true },
+            "sex": { "type": "enum", "values": ["M", "F", "X"] }
+          }
+        }
+      }
+    },
+    "guardian_identity": {
+      "label": "监护人身份证件",
+      "fields": {
+        "name": { "type": "string", "required": true, "note": "证件现用名" },
+        "formerNames": { "type": "string[]", "required": false, "note": "证件登载的曾用名" },
+        "idType": { "type": "enum", "values": ["resident_id", "passport", "permanent_residence"] },
+        "idNumber": { "type": "string", "required": true, "sensitive": true },
+        "idExpiryDate": { "type": "YYYY-MM-DD", "required": true, "note": "有效期届满日；长期/未标限期走人工" },
+        "relation": { "type": "enum", "values": ["father", "mother", "grandparent", "legal_guardian"] }
+      }
+    },
+    "household_relation": {
+      "label": "户口簿与监护关系材料",
+      "fields": {
+        "bookNo": { "type": "string", "required": true, "sensitive": true },
+        "registryZone": { "type": "iana_tz", "required": true, "note": "登记地（受理窗口）IANA 时区" },
+        "child": {
+          "type": "object",
+          "fields": { "name": { "type": "string", "required": true, "sensitive": true } }
+        },
+        "guardians": {
+          "type": "array",
+          "itemFields": {
+            "name": { "type": "string", "required": true, "sensitive": true, "note": "户籍登载姓名，可能是证件曾用名" },
+            "relation": { "type": "enum", "values": ["father", "mother", "grandparent", "legal_guardian", "other"] }
+          }
+        }
+      }
+    }
+  },
+  "decisions": {
+    "APPROVED": "四类规则全部通过，进入可登记状态 READY",
+    "CORRECTION": "存在 fail 或 needs_correction，逐条列明补正项，允许补充新版本后重审",
+    "MANUAL": "存在需人工认定的情形（超期、未来日期、关系存疑等），转人工接管"
+  }
+}

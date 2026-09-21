@@ -1,0 +1,27 @@
+{
+  "description": "医院侧出生医学证明交换报文样例（脱敏）。birthTime 为医院当地带偏移绝对时刻，登记窗口需按登记地时区重新取日。",
+  "samples": [
+    {
+      "caseId": "cross-zone-midnight",
+      "note": "乌鲁木齐 23:30 分娩，同一时刻在上海登记地已是次日 10-01：跨时区日期归一",
+      "birthCertificate": {
+        "certificateNo": "X20260930001",
+        "hospitalName": "乌鲁木齐市某妇幼保健院",
+        "hospitalZone": "Asia/Urumqi",
+        "birthTime": "2026-09-30T23:30:00+06:00",
+        "child": { "name": "张小娃", "sex": "M" }
+      }
+    },
+    {
+      "caseId": "same-zone-morning",
+      "note": "同城医院上午出生，医院与登记地同日",
+      "birthCertificate": {
+        "certificateNo": "X20261001002",
+        "hospitalName": "上海市某妇产科医院",
+        "hospitalZone": "Asia/Shanghai",
+        "birthTime": "2026-10-01T08:15:00+08:00",
+        "child": { "name": "李小丫", "sex": "F" }
+      }
+    }
+  ]
+}
